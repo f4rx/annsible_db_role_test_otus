@@ -1,0 +1,24 @@
+language: python
+python:
+  - '2.7'
+env:
+  matrix:
+  - GCE_CREDENTIALS_FILE="$(pwd)/credentials.json"
+  global:
+  - secure: PSMF6mUg2XJwkdLXnUP/B/JQI21NG674zooxNsIm/Lh9zpf/sAma5koc3ZtSqEeBHvzqVKADuKiFhIglZp2UOaF4yFORV/XnnjLPN6sItw4A2Kn3UpyfiZQdJD7S99SShV1cIOgAANVeHwZNSUzBr4HW498mli8F6zT2dcU075YUelmokOPkb9cL1pP+Nc86sbQZfL+UUBMwD29vK5qMeBUNqu6BzoCmh7QZtifuGqTjGoS2V9+ZHT7LlqCqKXsjKQ7qFpZHjkf79nmVvI2xer8IIosjIPlQYTKNau72vK4xuMLOAl3HsBL4NMR8crcIr5mpMbBLzDWG5yJeUScAWPQP3xL1PgQhNalPh4x2qrN4KfjAyT0wsP+zW/Ax6gh7pbUWSLv3gxb1/jBvk4k8TTUBjaFYXnlrBGFpT7Wd1+EN/wCURkHZsh/UEF3i2+mqBjVYvogFcOKYQwlIYDVyNjOAN2DBp8pdsbYY3Etv3QLyduV5x7xp7p/ZfKMvou4mO8N8unxrb4cDL+ranOJMfmEguM5XFHpAQm4PFngFCdXDAiloDIK45rWMAmzuFbSMP4wSBegyg3D+po9UZ/A/IDGHSqln/KU+B4iMW4D11T+MECBOuJEgN2+QBEGOPEBMfbBK35EXCJTPc5OHeFcAe7AVGGJQ4T3ssIX4R5k42C8=
+  - secure: MjD7Yn+F1+yNvqyRNCYPibNejMHAeOBv1V58qYZO8MzohPSPpX7qXDCVLUW90bjtHOCbgHyKh5Gt6HTLPCSoVmoJ+TvDVZBkFn9FN7HvFlthkIwCVIzwZ4kDtqXPANJ8b8K7uRdHU7ci1ckYnOB6VxPEzdfvZn2an/26AGP7B7YoMUpcQTsFc2AlbI9ZMowTB7UjXpcp636wyNX0XHcjmabTsiWwhVOW2MAf3cQHCLqssf/mu3/ur6n+W7qC7KQobEyrqgHgnJE+0RrtAS8LceWKQSyEIfBNfXcPumg8t0EfklEFXHU3DSPdxDNEzHuJGtI5fssYxcjvc+X0g1F3GTAzkwTZKBn2EegjEiRHGtHyRz+PvVEW+YNOs5+w4xEueCvvmFBzCjitJuYbj0/O/i/ZiGAYOr7V+GhbtHi/jGELVrjgj5SQZRMRWHTeAhXCuvjQ9MA1PCX4ebbERALZRmEHJRObPqcQwyFUs1j3IUjnws/S31xF27WGnI6fKP/Op5ofElNPK1Pp8W3Ti9pol8Z6IhWTcC0sshohyBbX1hqwE+B6xS1K1cjiNSt2qRMGYN1aLtCqUBYbMbVPuxuXwxl+IwGK7yszKqld3kwc979r7gGAvXRGBeVECZSuOIO34evFNOp/v0KBavPTB5TkQrpCRlS9dLecTuLHW2SfJvY=
+  - secure: LkP7wptcTjC6tOIYBrQ/rJSMXHsfV6ZdkaxVUMZZF0gGvGKE+uennkhDiIDcKNt6Ij7/flR0P7gzIP6hgIxvnnjvRdOj6ukVYjG12OywGzV1bnMbDoWpmKCDmJeVEWrIAreWIRSwTNAbB7YT0x66/2TnoKEqamhrrU1niSfpcWveUoVtEcC9+3bJ5NAvVBC1MIJlNoZqEwfOwDpPB5s683+1AWMava2gOma4i6RnPMhTdl0SzFFIEcec/qN1YgTAY5Lvr4sg2y7b7URkhzVLA9PlCH6MD6iN9WO+YmSsaSdBFbwiSapYE6dh9vuZKafzo+KcnHCtgR7kEj3qqgbuV45urjXa4tbK/Tzmi7oEzYggf/nKr9LgujZ/cAg2E9RXgcJMZzeHYSTozKQXhIjgJ9mCUwipjUvEo7ks9iRIppR1oU9ElWL75fmz2J33kOWN1DnR2joN98vhNNDqYz2OwCOXBVTFVtY/L6k/OYbiq3+3zPhlbqv1km3vGKi+UzaSPVWcf6dVyDfJ0zpPMHGsuSJTYLZQjjczpr4usLx1fTY61PJrpINC4t+9NuKv66efSWMqusE4tWIjPvm9qPm3ImKnWgYfdmHut95yAfVCuUkZ2Jsf6LwzJJXeSCE8Lv/vpuStJ8+4SmrGhfN/fJaWd4uCRj7I1mR2wjUpPrbtVWE=
+before_install:
+  - openssl aes-256-cbc -K $encrypted_3d454a46e431_key -iv $encrypted_3d454a46e431_iv
+    -in secrets.tar.enc -out secrets.tar -d
+  - tar xvf secrets.tar
+  - mv google_compute_engine /home/travis/.ssh/
+  - chmod 0600 /home/travis/.ssh/google_compute_engine
+install:
+  - pip install -r requirements.txt
+script:
+  - molecule create
+  - molecule converge
+  - molecule verify
+after_script:
+  - molecule --debug destroy

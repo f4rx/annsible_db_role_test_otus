@@ -1,0 +1,15 @@
+credentials.json
+google_compute_engine
+google_compute_engine.pub
+secrets.tar
+
+
+
+molecule
+*.log
+*.pyc
+.molecule
+.cache
+molecule2
+
+env
